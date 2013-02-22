@@ -43,6 +43,6 @@ class WorkerTest extends TestKit(ActorSystem("WorkerTest"))
     val dimension = Dimension(640, 480)
     val location = DefaultParameters.mandelbrotLocation
     val mandelbrotParameters = DefaultParameters.mandelbrotParameters
-    Task(RenderParams(dimension, location, mandelbrotParameters))
+    RenderParams(dimension, location, mandelbrotParameters)
   }
 }

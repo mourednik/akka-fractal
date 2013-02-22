@@ -1,14 +1,14 @@
 package fractal
 
-object TaskSequence {
+object RenderSequence {
 
-  def makeSequence(startTask: Task, finalZoom: Double, numFrames: Int) = {
+  def makeSequence(startParams: RenderParams, finalZoom: Double, numFrames: Int) = {
     if (numFrames < 2) {
       sys.error("numFrames < 2")
     }
-    val dimension = startTask.renderParams.dimension
-    val algorithmParameters = startTask.renderParams.algorithmParams
-    val startLocation = startTask.renderParams.location
+    val dimension = startParams.dimension
+    val algorithmParameters = startParams.algorithmParams
+    val startLocation = startParams.location
     val startZoom = startLocation.zoom
     val zoomIncrement = (finalZoom - startLocation.zoom) / numFrames
 
@@ -16,6 +16,6 @@ object TaskSequence {
       val zoom = startZoom + i * zoomIncrement
       Location(startLocation.name, startLocation.coordinate, zoom)
     }
-    locations.map(location => Task(RenderParams(dimension, location, algorithmParameters)))
+    locations.map(location => RenderParams(dimension, location, algorithmParameters))
   }
 }

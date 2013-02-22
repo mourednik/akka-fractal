@@ -5,7 +5,7 @@ import scala.collection.immutable
 /**
  * Task
  */
-class Task(val renderParams: RenderParams, var id: Int = 0) extends Serializable {
+case class Task(val renderParams: RenderParams, val id: Int) extends Serializable {
 
   def makeSubTasks(numSubTasks: Int): immutable.IndexedSeq[SubTask] = {
     val containerSubTask = SubTask(renderParams, (0, renderParams.dimension.y), 0, id)
@@ -29,10 +29,6 @@ class Task(val renderParams: RenderParams, var id: Int = 0) extends Serializable
   override def toString = {
     s"$renderParams $id $hashCode"
   }
-}
-
-object Task {
-  def apply(renderParams: RenderParams) = new Task(renderParams)
 }
 
 /**

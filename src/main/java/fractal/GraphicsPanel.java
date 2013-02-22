@@ -11,84 +11,59 @@ import javax.swing.JPanel;
 public class GraphicsPanel extends JPanel {
 
 	private static final long serialVersionUID = 2002199253782033728L;
-	private DistributedRenderer renderer;
 	private BufferedImage image;
+	private Navigator navigator;
 
-	private Dimension dimension;
-	private Location location;
-	private AlgorithmParams algParams;
-
-	private int iterations;
-	private double x;
-	private double y;
-	private double zoom;
-
-	public GraphicsPanel(DistributedRenderer renderer) {
+	public GraphicsPanel(Navigator navigator) {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				handleKey(e.getKeyCode());
 			}
 		});
-		this.renderer = renderer;
+		this.navigator = navigator;		
 		setSize(MainFrame.WIDTH, MainFrame.HEIGHT);
 		setFocusable(true);
+		navigator.setGraphicsPanel(this);
 		initialize();
 	}
 
 	private void initialize() {
-		iterations = DefaultParameters.iterations();
-		location = DefaultParameters.mandelbrotLocation();
-		x = location.coordinate().x();
-		y = location.coordinate().y();
-		zoom = location.zoom();
-		algParams = DefaultParameters.mandelbrotParameters();
 		handleKey(KeyEvent.VK_R);
 	}
 
 	public void handleKey(int keyCode) {
 		switch (keyCode) {
 		case KeyEvent.VK_RIGHT:
-			x += 0.1 / zoom;
+			navigator.incrementXCoordinate(0.1);			
 			break;
 		case KeyEvent.VK_UP:
-			y -= 0.1 / zoom;
+			navigator.incrementYCoordinate(-0.1);
 			break;
 		case KeyEvent.VK_LEFT:
-			x -= 0.1 / zoom;
+			navigator.incrementXCoordinate(-0.1);
 			break;
 		case KeyEvent.VK_DOWN:
-			y += 0.1 / zoom;
+			navigator.incrementYCoordinate(0.1);
 			break;
 		case KeyEvent.VK_S:
-			iterations += 16;
+			navigator.incrementIterations(16);		
 			break;
 		case KeyEvent.VK_X:
-			iterations = Math.max(iterations - 16, 0);
+			navigator.incrementIterations(-16);
 			break;
 		case KeyEvent.VK_A:
-			zoom *= 2.0;
+			navigator.incrementZoom(2.0);
 			break;
 		case KeyEvent.VK_Z:
-			zoom *= 0.5;
+			navigator.incrementZoom(0.5);
 			break;
 		case KeyEvent.VK_R:
+			navigator.requestRenderToPanel();
 			break;
 		default:
 			return;
-		}
-		AlgorithmParams newParams = null;
-		if (algParams instanceof MandelbrotParams) {
-			newParams = new MandelbrotParams(iterations);
-		} else if (algParams instanceof JuliaParams) {
-			newParams = new JuliaParams(iterations,
-					((JuliaParams) algParams).coefficient());
-		}
-		Dimension newDimension = new Dimension(getWidth(), getHeight());
-		Location newLocation = new Location("default", new Coordinate(x, y),
-				zoom);
-		renderer.render(Task.apply(new RenderParams(newDimension, newLocation,
-				newParams)), this);
+		}		
 	}
 
 	public synchronized void drawImage(ImageSegment image) {
@@ -96,16 +71,11 @@ public class GraphicsPanel extends JPanel {
 		repaint();
 	}
 
-	private String currentParameters() {
-		return "x=" + x + " y=" + y + " zoom=" + zoom + " iterations="
-				+ iterations;
-	}
-
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
 		g.setColor(Color.WHITE);
-		g.drawString(currentParameters(), 20, 20);
+		g.drawString(navigator.getParamString(), 20, 20);
 	}
 }

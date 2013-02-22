@@ -10,6 +10,7 @@ public class MainFrame {
 
 	private JFrame frame;
 	private DistributedRenderer renderer;
+	private Navigator navigator;
 	private JPanel graphicsPanel;
 
 	public static int WIDTH = 1280;
@@ -44,7 +45,8 @@ public class MainFrame {
 	private void initialize() {
 		frame = new JFrame();
 		renderer = new DistributedRenderer();
-		graphicsPanel = new GraphicsPanel(renderer);
+		navigator = new Navigator(renderer);
+		graphicsPanel = new GraphicsPanel(navigator);
 
 		frame.setBounds(100, 100, WIDTH, HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

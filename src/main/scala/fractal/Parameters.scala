@@ -30,6 +30,8 @@ case class RenderParams(dimension: Dimension, location: Location, algorithmParam
 
 object DefaultParameters {
 
+  def dimension = Dimension(1280,800)
+
   def iterations = 128
 
   def mandelbrotLocation = Location("Default", Coordinate(-0.25, 0.0), 0.5)

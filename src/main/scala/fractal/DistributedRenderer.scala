@@ -16,14 +16,18 @@ class DistributedRenderer() {
 
   private val client = new DistributedRendererClient(system)
 
-  def render(task: Task, panel: GraphicsPanel) = {
-    val future = master ? task
+  def renderToPanel(renderParams: RenderParams, panel: GraphicsPanel) = {
+    val future = master ? renderParams
     future.onSuccess {
       case image: ImageSegment => panel.drawImage(image)
       case _ =>
     }
   }
 
+  def renderToFile(renderParams: RenderParams, filename: String) {
+    
+  }
+  
   def shutDown {
     system.shutdown
     client.shutDown

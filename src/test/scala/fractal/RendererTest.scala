@@ -42,13 +42,13 @@ class RendererTest extends FunSuite with ShouldMatchers {
     //val location = Location("Another Mandelbrot", Coordinate(-0.1592, -1.0317), 32.0);
     val location = Location("Default", Coordinate(-0.25, 0.0), 0.5);
     val mandelbrotParameters = MandelbrotParams(128)
-    Task(RenderParams(dimension, location, mandelbrotParameters))
+    Task(RenderParams(dimension, location, mandelbrotParameters), 0)
   }
 
   def prepareJuliaTask(dimension: Dimension) = {
     val location = Location("Default", Coordinate(0.0, 0.0), 0.5);
     val parameters = JuliaParams(128, Complex(-0.4, 0.6))
-    Task(RenderParams(dimension, location, parameters))
+    Task(RenderParams(dimension, location, parameters), 0)
   }
 
 }

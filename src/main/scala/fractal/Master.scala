@@ -69,8 +69,8 @@ class Master extends Actor with ActorLogging {
         notifyWorkers
       }
 
-    case task: Task => {
-      task.id = taskCounter
+    case renderParams: RenderParams => {
+      val task = Task(renderParams, taskCounter)      
       taskCounter += 1
       val subtasks = task.makeSubTasks(Math.max(1, workers.size))
       val thisSender = sender
