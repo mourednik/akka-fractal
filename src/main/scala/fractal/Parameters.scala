@@ -30,7 +30,7 @@ case class RenderParams(dimension: Dimension, location: Location, algorithmParam
 
 object DefaultParameters {
 
-  def dimension = Dimension(1280,800)
+  def dimension = Dimension(1280, 800)
 
   def iterations = 128
 

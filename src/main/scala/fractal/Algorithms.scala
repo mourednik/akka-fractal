@@ -10,8 +10,8 @@ trait MandelbrotAlgorithm extends RendererAlgorithm {
 
     val width = dimension.x
     val height = dimension.y
-    val lowerBound = task.range._1
-    val upperBound = task.range._2
+    val lowerBound = task.segmentRange._1
+    val upperBound = task.segmentRange._2
     val segmentHeight = task.getHeight
     val xPos = location.coordinate.x
     val yPos = location.coordinate.y
@@ -65,8 +65,8 @@ trait JuliaAlgorithm extends RendererAlgorithm {
 
     val width = dimension.x
     val height = dimension.y
-    val lowerBound = task.range._1
-    val upperBound = task.range._2
+    val lowerBound = task.segmentRange._1
+    val upperBound = task.segmentRange._2
     val segmentHeight = task.getHeight
     val xPos = location.coordinate.x
     val yPos = location.coordinate.y

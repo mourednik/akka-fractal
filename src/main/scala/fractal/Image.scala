@@ -22,9 +22,9 @@ class Image(pixels: Array[Short], task: Task) {
 case class ImageSegment(protected val pixels: Array[Short], protected val task: SubTask)
   extends Image(pixels, task) with Serializable {
 
-  def lowerBound = task.range._1
+  def lowerBound = task.segmentRange._1
 
-  def upperBound = task.range._2
+  def upperBound = task.segmentRange._2
 
   def getRenderTask = task
 

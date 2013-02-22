@@ -34,22 +34,22 @@ case class Task(val renderParams: RenderParams, val id: Int) extends Serializabl
 /**
  * SubTask
  */
-class SubTask(renderParams: RenderParams, id: Int, val range: (Int, Int), val index: Int)
+class SubTask(renderParams: RenderParams, id: Int, val segmentRange: (Int, Int), val index: Int)
   extends Task(renderParams, id) {
 
-  def getHeight = range._2 - range._1
+  def getHeight = segmentRange._2 - segmentRange._1
 
   private def combineWith(other: SubTask) = {
-    val lowerBound = Math.min(range._1, other.range._1)
-    val upperBound = Math.max(range._2, other.range._2)
+    val lowerBound = Math.min(segmentRange._1, other.segmentRange._1)
+    val upperBound = Math.max(segmentRange._2, other.segmentRange._2)
     SubTask(renderParams, (lowerBound, upperBound))
   }
 
   def +(other: SubTask) = {
     if (renderParams != other.renderParams) {
       sys.error("Tasks have different RenderParams.")
-    } else if (range._2 == other.range._1 ||
-      other.range._2 == range._1) {
+    } else if (segmentRange._2 == other.segmentRange._1 ||
+      other.segmentRange._2 == segmentRange._1) {
       combineWith(other)
     } else {
       sys.error("Only adjacent segments can be combined.")
@@ -74,27 +74,27 @@ class SubTask(renderParams: RenderParams, id: Int, val range: (Int, Int), val in
     val subHeight = height / numThreads
     for (i <- 0 until numThreads) yield {
       if (i < numThreads - 1)
-        makeSubTask(i, subHeight, range._1)
+        makeSubTask(i, subHeight, segmentRange._1)
       else
-        makeLastSubTask(i, subHeight, range._1, height)
+        makeLastSubTask(i, subHeight, segmentRange._1, height)
     }
   }
 }
 
 object SubTask {
 
-  private def makeSubTask(renderParams: RenderParams, id: Int, range: (Int, Int), index: Int) = {
-    if (range._1 < 0 || range._2 > renderParams.dimension.y)
+  private def makeSubTask(renderParams: RenderParams, id: Int, segmentRange: (Int, Int), index: Int) = {
+    if (segmentRange._1 < 0 || segmentRange._2 > renderParams.dimension.y)
       sys.error("SegmentBounds exceed dimensions")
     else
-      new SubTask(renderParams, id, range, index)
+      new SubTask(renderParams, id, segmentRange, index)
   }
 
-  def apply(renderParams: RenderParams, range: (Int, Int), index: Int, id: Int) = {
-    makeSubTask(renderParams, id, range, index)
+  def apply(renderParams: RenderParams, segmentRange: (Int, Int), index: Int, id: Int) = {
+    makeSubTask(renderParams, id, segmentRange, index)
   }
 
-  def apply(renderParams: RenderParams, range: (Int, Int)) = {
-    makeSubTask(renderParams, 0, range, 0)
+  def apply(renderParams: RenderParams, segmentRange: (Int, Int)) = {
+    makeSubTask(renderParams, 0, segmentRange, 0)
   }
 }

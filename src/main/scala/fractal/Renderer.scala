@@ -13,14 +13,14 @@ class Renderer(val actorSystem: ActorSystem) {
 
   private def renderSegment(task: SubTask) = computeImageSegment(task)
 
-  def render(numThreads: Int, renderTask: Task): ImageSegment = {
-    val subtasks = renderTask.makeSubTasks(numThreads)
-    val segments = subtasks.map(subtask => Future(renderSegment(subtask)))
-    val combinedSegments = Future.reduce(segments)(_ + _)
-    Await.result(combinedSegments, 10 seconds)
+  def render(numThreads: Int, task: Task): ImageSegment = {
+    val subtasks = task.makeSubTasks(numThreads)
+    val imageSegments = subtasks.map(subtask => Future(renderSegment(subtask)))
+    val combinedSegments = Future.reduce(imageSegments)(_ + _)
+    Await.result(combinedSegments, 1 minute)
   }
 }
 
 trait RendererAlgorithm {
-  def computeImageSegment(parameters: SubTask): ImageSegment
+  def computeImageSegment(task: SubTask): ImageSegment
 }

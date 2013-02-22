@@ -13,8 +13,8 @@ public class MainFrame {
 	private Navigator navigator;
 	private JPanel graphicsPanel;
 
-	public static int WIDTH = 1280;
-	public static int HEIGHT = 800;
+	public static int WIDTH = DefaultParameters.dimension().x();
+	public static int HEIGHT = DefaultParameters.dimension().y();
 
 	/**
 	 * Launch the application.

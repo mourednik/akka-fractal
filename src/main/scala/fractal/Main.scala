@@ -13,7 +13,7 @@ object Main extends App {
       implicit val system = ActorSystem("FractalSystem")
       val client = new DistributedRendererClient(system)
       readLine("Client started. Press any key to exit.")
-      client.shutDown
+      system.shutdown
     } else {
       MainFrame.main(args)
     }

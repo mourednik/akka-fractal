@@ -29,8 +29,8 @@ object WorkResult {
 class WorkResultCollector(val master: Master) {
   private var resultMap = new mutable.HashMap[Task, WorkResultContainer]
 
-  def prepareForCollection(task: Task, numWorkers: Int) {
-    resultMap += (task -> new WorkResultContainer(numWorkers))
+  def prepareForCollection(task: Task, numSubTasks: Int) {
+    resultMap += (task -> new WorkResultContainer(numSubTasks))
   }
 
   def insertResult(result: WorkResult) {

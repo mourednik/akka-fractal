@@ -70,7 +70,7 @@ class Master extends Actor with ActorLogging {
       }
 
     case renderParams: RenderParams => {
-      val task = Task(renderParams, taskCounter)      
+      val task = Task(renderParams, taskCounter)
       taskCounter += 1
       val subtasks = task.makeSubTasks(Math.max(1, workers.size))
       val thisSender = sender

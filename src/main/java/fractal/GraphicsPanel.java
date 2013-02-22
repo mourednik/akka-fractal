@@ -69,8 +69,8 @@ public class GraphicsPanel extends JPanel {
 		}
 	}
 
-	public synchronized void drawImage(ImageSegment image) {
-		this.image = image.getBufferedImage();
+	public synchronized void drawImage(BufferedImage image) {
+		this.image = image;
 		repaint();
 	}
 

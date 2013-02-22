@@ -39,10 +39,10 @@ class Navigator(renderer: DistributedRenderer) {
     algparams match {
       case mandelParams: MandelbrotParams =>
         val iterations = Math.max(0, mandelParams.maxIterations + increment)
-        algparams = MandelbrotParams(iterations)        
+        algparams = MandelbrotParams(iterations)
       case juliaParams: JuliaParams =>
         val iterations = Math.max(0, juliaParams.maxIterations + increment)
-        algparams = JuliaParams(iterations, juliaParams.coefficient)        
+        algparams = JuliaParams(iterations, juliaParams.coefficient)
     }
     requestRenderToPanel
   }
@@ -51,8 +51,8 @@ class Navigator(renderer: DistributedRenderer) {
     if (panel.isDefined)
       renderer.renderToPanel(RenderParams(dimension, location, algparams), panel.get)
   }
-  
+
   def getParamString = {
-    s"${dimension.x}x${dimension.y}. ${location.coordinate}, ${algparams}"
+    s"$dimension, $location, $algparams"
   }
 }

@@ -13,34 +13,30 @@ class DistributedRenderer() {
   implicit val system = ActorSystem("FractalSystem")
 
   private val master = system.actorOf(Props[Master], name = "master")
-
   private val client = new DistributedRendererClient(system)
 
   def renderToPanel(renderParams: RenderParams, panel: GraphicsPanel) = {
     val future = master ? renderParams
     future.onSuccess {
-      case image: ImageSegment => panel.drawImage(image)
+      case image: Image => panel.drawImage(image.getBufferedImage)
       case _ =>
     }
   }
 
   def renderToFile(renderParams: RenderParams, filename: String) {
-    
+    val future = master ? renderParams
+    future.onSuccess {
+      case image: Image => FileUtil.saveAsPNG(filename, image.getBufferedImage)
+      case _ =>
+    }
   }
-  
+
   def shutDown {
     system.shutdown
-    client.shutDown
   }
 }
 
 class DistributedRendererClient(system: ActorSystem) {
-
   implicit val timeout = Timeout(20 seconds)
-
   val worker = system.actorOf(Props[Worker])
-
-  def shutDown {
-    system.shutdown
-  }
 }
