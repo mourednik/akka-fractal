@@ -15,17 +15,18 @@ public class GraphicsPanel extends JPanel {
 	private Navigator navigator;
 
 	public GraphicsPanel(Navigator navigator) {
+		this.navigator = navigator;
+		setSize(MainFrame.WIDTH, MainFrame.HEIGHT);
+		setFocusable(true);
+		navigator.setGraphicsPanel(this);
+		initialize();
+
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				handleKey(e.getKeyCode());
 			}
 		});
-		this.navigator = navigator;		
-		setSize(MainFrame.WIDTH, MainFrame.HEIGHT);
-		setFocusable(true);
-		navigator.setGraphicsPanel(this);
-		initialize();
 	}
 
 	private void initialize() {
@@ -33,9 +34,11 @@ public class GraphicsPanel extends JPanel {
 	}
 
 	public void handleKey(int keyCode) {
+		navigator.setDimension(new Dimension(this.getWidth(), this.getHeight()));
+		
 		switch (keyCode) {
 		case KeyEvent.VK_RIGHT:
-			navigator.incrementXCoordinate(0.1);			
+			navigator.incrementXCoordinate(0.1);
 			break;
 		case KeyEvent.VK_UP:
 			navigator.incrementYCoordinate(-0.1);
@@ -47,7 +50,7 @@ public class GraphicsPanel extends JPanel {
 			navigator.incrementYCoordinate(0.1);
 			break;
 		case KeyEvent.VK_S:
-			navigator.incrementIterations(16);		
+			navigator.incrementIterations(16);
 			break;
 		case KeyEvent.VK_X:
 			navigator.incrementIterations(-16);
@@ -63,7 +66,7 @@ public class GraphicsPanel extends JPanel {
 			break;
 		default:
 			return;
-		}		
+		}
 	}
 
 	public synchronized void drawImage(ImageSegment image) {

@@ -13,7 +13,6 @@ class Navigator(renderer: DistributedRenderer) {
 
   def setDimension(newDimension: Dimension) {
     dimension = Dimension(newDimension.x, newDimension.y)
-    requestRenderToPanel
   }
 
   def incrementZoom(increment: Double) {
