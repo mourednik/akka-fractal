@@ -7,9 +7,33 @@ import scala.collection.immutable
  */
 case class Task(val renderParams: RenderParams, val id: Int) extends Serializable {
 
-  def makeSubTasks(numSubTasks: Int): immutable.IndexedSeq[SubTask] = {
-    val containerSubTask = SubTask(renderParams, (0, renderParams.dimension.y), 0, id)
-    containerSubTask.makeSubTasks(numSubTasks)
+  def height = renderParams.dimension.y
+
+  def segmentLB = 0
+
+  def segmentUB = height
+
+  private def makeSubTask(index: Int, height: Int, offset: Int) = {
+    val lb = index * height + offset
+    val ub = (index + 1) * height + offset
+    val segmentRange = (lb, ub)
+    SubTask(renderParams, segmentRange, index, id)
+  }
+
+  private def makeLastSubTask(index: Int, height: Int, offset: Int) = {
+    val lb = index * height + offset
+    val segmentRange = (lb, segmentUB)
+    SubTask(renderParams, segmentRange, index, id)
+  }
+
+  def makeSubTasks(numSubTasks: Int) = {
+    val subTaskHeight = height / numSubTasks
+    for (i <- 0 until numSubTasks) yield {
+      if (i < numSubTasks - 1)
+        makeSubTask(i, subTaskHeight, segmentLB)
+      else
+        makeLastSubTask(i, subTaskHeight, segmentLB)
+    }
   }
 
   override def hashCode: Int = {
@@ -34,54 +58,34 @@ case class Task(val renderParams: RenderParams, val id: Int) extends Serializabl
 /**
  * SubTask
  */
-class SubTask(renderParams: RenderParams, id: Int, val segmentRange: (Int, Int), val index: Int)
+class SubTask(renderParams: RenderParams, id: Int, private val segmentRange: (Int, Int), val index: Int)
   extends Task(renderParams, id) {
 
-  def getHeight = segmentRange._2 - segmentRange._1
+  override def height = segmentRange._2 - segmentRange._1
+
+  override def segmentLB = segmentRange._1
+
+  override def segmentUB = segmentRange._2
 
   private def combineWith(other: SubTask) = {
-    val lowerBound = Math.min(segmentRange._1, other.segmentRange._1)
-    val upperBound = Math.max(segmentRange._2, other.segmentRange._2)
-    SubTask(renderParams, (lowerBound, upperBound))
+    val lb = Math.min(segmentLB, other.segmentLB)
+    val ub = Math.max(segmentUB, other.segmentUB)
+    SubTask(renderParams, (lb, ub))
   }
 
   def +(other: SubTask) = {
     if (renderParams != other.renderParams) {
       sys.error("Tasks have different RenderParams.")
-    } else if (segmentRange._2 == other.segmentRange._1 ||
-      other.segmentRange._2 == segmentRange._1) {
+    } else if (segmentUB == other.segmentLB ||
+      other.segmentUB == segmentLB) {
       combineWith(other)
     } else {
       sys.error("Only adjacent segments can be combined.")
     }
   }
 
-  private def makeSubTask(index: Int, height: Int, offset: Int) = {
-    val lowerBound = index * height + offset
-    val upperBound = (index + 1) * height + offset
-    val subRange = (lowerBound, upperBound)
-    SubTask(renderParams, subRange, index, id)
-  }
-
-  private def makeLastSubTask(index: Int, height: Int, offset: Int) = {
-    val lowerBound = index * height + offset
-    val subRange = (lowerBound, segmentRange._2)
-    SubTask(renderParams, subRange, index, id)
-  }
-
-  override def makeSubTasks(numSubTasks: Int) = {
-    val height = getHeight
-    val subHeight = height / numSubTasks
-    for (i <- 0 until numSubTasks) yield {
-      if (i < numSubTasks - 1)
-        makeSubTask(i, subHeight, segmentRange._1)
-      else
-        makeLastSubTask(i, subHeight, segmentRange._1)
-    }
-  }
-  
-    override def toString = {
-    s"$renderParams $id $hashCode $segmentRange $index"
+  override def toString = {
+    super.toString + s" $segmentRange $index"
   }
 }
 

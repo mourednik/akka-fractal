@@ -19,19 +19,18 @@ class Image(pixels: Array[Short], task: Task) extends Serializable {
   }
 }
 
-case class ImageSegment(protected val pixels: Array[Short], protected val task: SubTask)
-  extends Image(pixels, task) {
+case class ImageSegment(protected val pixels: Array[Short], protected val subtask: SubTask)
+  extends Image(pixels, subtask) {
 
-  def lowerBound = task.segmentRange._1
+  def lowerBound = subtask.segmentLB
 
-  def upperBound = task.segmentRange._2
+  def upperBound = subtask.segmentUB
 
-  def getRenderTask = task
+  def getRenderTask = subtask
 
   def +(other: ImageSegment) = {
-    def combinedTask = task + other.task
+    def combinedTask = subtask + other.subtask
     val combinedPixels = pixels ++ other.pixels
     new ImageSegment(combinedPixels, combinedTask)
   }
-  
 }

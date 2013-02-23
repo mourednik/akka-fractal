@@ -46,7 +46,7 @@ class Master extends Actor with ActorLogging {
         else if (workers(worker) == None) {
           val work = workQ.dequeue()
           workers += (worker -> Some(work))
-          log.info(s"MASTER: sending work ${work.task}")
+          //log.info(s"MASTER: sending work ${work.task}")
           worker ! WorkToBeDone(work)
         }
       }
@@ -76,7 +76,7 @@ class Master extends Actor with ActorLogging {
       val numSubTasks = math.max(1, size / 512000)
       val subtasks = task.makeSubTasks(numSubTasks)
       val thisSender = sender
-      log.info(s"MASTER: Received Task. Preparing collector for $task")
+      //log.info(s"MASTER: Received Task. Preparing collector for $task")
       workResultAggregator.prepareForCollection(task, numSubTasks)
       subtasks.foreach(subtask => workQ.enqueue(Work(sender, subtask)))
       notifyWorkers

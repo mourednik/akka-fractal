@@ -8,8 +8,8 @@ case class JuliaParams(var maxIterations: Int, var coefficient: Complex) extends
 
 case class Coordinate(x: Double, y: Double)
 
-case class Location(val name: String, val coordinate: Coordinate, val zoom: Double)
-  extends Serializable {
+case class Location(val name: String, val coordinate: Coordinate, val zoom: Double) extends Serializable {
+
   override def equals(other: Any) = other match {
     case that: Location =>
       this.name == that.name &&
@@ -20,6 +20,7 @@ case class Location(val name: String, val coordinate: Coordinate, val zoom: Doub
 }
 
 case class Dimension(val x: Int, val y: Int) extends Serializable {
+  
   override def equals(other: Any) = other match {
     case that: Dimension => (this.x == that.x && this.y == that.y)
     case _ => false

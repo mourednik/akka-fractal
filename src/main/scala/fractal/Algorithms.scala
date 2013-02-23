@@ -4,15 +4,15 @@ import scala.annotation.tailrec
 
 trait MandelbrotAlgorithm extends RendererAlgorithm {
 
-  override def computeImageSegment(task: SubTask) = {
+  override def computeImageSegment(subtask: SubTask) = {
 
-    import task.renderParams._
+    import subtask.renderParams._
 
     val width = dimension.x
     val height = dimension.y
-    val lowerBound = task.segmentRange._1
-    val upperBound = task.segmentRange._2
-    val segmentHeight = task.getHeight
+    val lowerBound = subtask.segmentLB
+    val upperBound = subtask.segmentUB
+    val segmentHeight = subtask.height
     val xPos = location.coordinate.x
     val yPos = location.coordinate.y
 
@@ -53,22 +53,22 @@ trait MandelbrotAlgorithm extends RendererAlgorithm {
         pixels(bufferIndex) = (i * 256.0 / maxIterations).toShort;
       bufferIndex += 1
     }
-    new ImageSegment(pixels, task)
+    new ImageSegment(pixels, subtask)
   }
 
 }
 
 trait JuliaAlgorithm extends RendererAlgorithm {
 
-  override def computeImageSegment(task: SubTask) = {
+  override def computeImageSegment(subtask: SubTask) = {
 
-    import task.renderParams._
+    import subtask.renderParams._
 
     val width = dimension.x
     val height = dimension.y
-    val lowerBound = task.segmentRange._1
-    val upperBound = task.segmentRange._2
-    val segmentHeight = task.getHeight
+    val lowerBound = subtask.segmentLB
+    val upperBound = subtask.segmentUB
+    val segmentHeight = subtask.height
     val xPos = location.coordinate.x
     val yPos = location.coordinate.y
 
@@ -111,7 +111,7 @@ trait JuliaAlgorithm extends RendererAlgorithm {
       pixels(bufferIndex) = (result * 256.0 / maxIterations).toShort;
       bufferIndex += 1
     }
-    new ImageSegment(pixels, task)
+    new ImageSegment(pixels, subtask)
   }
 }
 

@@ -29,7 +29,7 @@ class WorkerTest extends TestKit(ActorSystem("WorkerTest"))
     "work" in {
       val master = system.actorOf(Props[Master], "master")
       val worker = system.actorOf(Props(new Worker(master)))
-      val task = makeTask
+      val task = renderParams
       val future = master ? task
       try {
         val result = Await.result(future, timeout.duration).asInstanceOf[ImageSegment]
@@ -39,7 +39,7 @@ class WorkerTest extends TestKit(ActorSystem("WorkerTest"))
     }
   }
 
-  def makeTask = {
+  def renderParams = {
     val dimension = Dimension(640, 480)
     val location = DefaultParameters.mandelbrotLocation
     val mandelbrotParameters = DefaultParameters.mandelbrotParameters
