@@ -7,6 +7,18 @@ class Navigator(distRenderer: DistributedRenderer) {
   private var location = DefaultParameters.mandelbrotLocation
   private var algparams: AlgorithmParams = DefaultParameters.mandelbrotParameters
 
+  def loadJulia {
+    location = DefaultParameters.juliaLocation
+    algparams = DefaultParameters.juliaParameters
+    requestRenderToPanel
+  }
+  
+  def loadMandelbrot {
+    location = DefaultParameters.mandelbrotLocation
+    algparams = DefaultParameters.mandelbrotParameters
+    requestRenderToPanel
+  }
+  
   def setGraphicsPanel(panel: GraphicsPanel) {
     this.panel = Some(panel)
   }

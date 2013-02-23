@@ -64,6 +64,12 @@ public class GraphicsPanel extends JPanel {
 		case KeyEvent.VK_R:
 			navigator.requestRenderToPanel();
 			break;
+		case KeyEvent.VK_J:
+			navigator.loadJulia();
+			break;
+		case KeyEvent.VK_M:
+			navigator.loadMandelbrot();
+			break;
 		default:
 			return;
 		}
