@@ -12,11 +12,12 @@ class Master extends Actor with ActorLogging {
 
   import MasterWorkerProtocol._
 
-  var taskCounter = 0
+  private val packetSize = context.system.settings.config.getString("settings.packet-size").toInt  
+  private var taskCounter = 0
 
-  val workResultAggregator = new WorkResultCollector(this)
-  val workers = mutable.Map.empty[ActorRef, Option[Work]]
-  val workQ = mutable.Queue.empty[Work]
+  private val workResultAggregator = new WorkResultAggregator(this)
+  private val workers = mutable.Map.empty[ActorRef, Option[Work]]
+  private val workQ = mutable.Queue.empty[Work]
 
   def returnResult(recipient: ActorRef, imageSegment: ImageSegment) {
     recipient ! imageSegment
@@ -33,36 +34,31 @@ class Master extends Actor with ActorLogging {
 
   def receive = {
     case WorkerCreated(worker) =>
-      //log.info(s"MASTER: Worker created: $worker")
       context.watch(worker)
       workers += (worker -> None)
       notifyWorkers()
 
     case WorkerRequestsWork(worker) =>
-      //log.info(s"MASTER: Worker requests work: $worker")
       if (workers.contains(worker)) {
         if (workQ.isEmpty)
           worker ! NoWorkToBeDone
         else if (workers(worker) == None) {
           val work = workQ.dequeue()
           workers += (worker -> Some(work))
-          //log.info(s"MASTER: sending work ${work.task}")
           worker ! WorkToBeDone(work)
         }
       }
 
     case WorkIsDone(worker, workResult) =>
       if (!workers.contains(worker))
-        log.error(s"MASTER: Unknown worker $worker")
+        log.error(s"MASTER: Received workResult from unknown worker: $worker, $workResult")
       else {
-        //log.info(s"MASTER: Received workResult ${workResult.task}")
         workers += (worker -> None)
         workResultAggregator.insertResult(workResult)
       }
 
     case Terminated(worker) =>
       if (workers.contains(worker) && workers(worker) != None) {
-        //log.error(s"MASTER: $worker died while processing ${workers(worker)}")
         val work = workers(worker).get
         workers -= worker
         workQ.enqueue(work)
@@ -72,11 +68,10 @@ class Master extends Actor with ActorLogging {
     case renderParams: RenderParams => {
       val task = Task(renderParams, taskCounter)
       taskCounter += 1
-      val size = renderParams.dimension.x * renderParams.dimension.y * 4
-      val numSubTasks = math.max(1, size / 512000)
+      val imageSize = renderParams.dimension.x * renderParams.dimension.y * 4
+      val numSubTasks = math.max(1, imageSize / packetSize)
       val subtasks = task.makeSubTasks(numSubTasks)
       val thisSender = sender
-      //log.info(s"MASTER: Received Task. Preparing collector for $task")
       workResultAggregator.prepareForCollection(task, numSubTasks)
       subtasks.foreach(subtask => workQ.enqueue(Work(sender, subtask)))
       notifyWorkers

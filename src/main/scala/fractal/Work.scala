@@ -8,25 +8,25 @@ import akka.actor.ActorRef
 /**
  * Work
  */
-case class Work(val customer: ActorRef, val task: SubTask) extends Serializable
+case class Work(val customer: ActorRef, val subtask: SubTask) extends Serializable
 
 /**
  * WorkResult
  */
-class WorkResult(customer: ActorRef, task: SubTask, val imageSegment: ImageSegment)
-  extends Work(customer, task) {
+class WorkResult(customer: ActorRef, subtask: SubTask, val imageSegment: ImageSegment)
+  extends Work(customer, subtask) {
   def getImageSegment = imageSegment
 }
 
 object WorkResult {
   def apply(work: Work, imageSegment: ImageSegment) =
-    new WorkResult(work.customer, work.task, imageSegment)
+    new WorkResult(work.customer, work.subtask, imageSegment)
 }
 
 /**
- * WorkResultCollector
+ * WorkResultAggregator
  */
-class WorkResultCollector(val master: Master) {
+class WorkResultAggregator(val master: Master) {
   private var resultMap = new mutable.HashMap[Task, WorkResultContainer]
 
   def prepareForCollection(task: Task, numSubTasks: Int) {
@@ -34,11 +34,11 @@ class WorkResultCollector(val master: Master) {
   }
 
   def insertResult(result: WorkResult) {
-    val resultContainer = resultMap(result.task)
-    resultContainer(result.task.index) = result
+    val resultContainer = resultMap(result.subtask)
+    resultContainer(result.subtask.index) = result
 
     if (resultContainer.isFull) {
-      resultMap.remove(result.task)
+      resultMap.remove(result.subtask)
       val reducedResult = resultContainer.getReducedResult
       master.returnResult(result.customer, reducedResult)
     }
@@ -52,15 +52,15 @@ class WorkResultContainer(size: Int) {
   private var currentSize = 0
   private val array = new Array[WorkResult](size)
 
-  def apply(i: Int) = {
-    array.apply(i)
+  def apply(index: Int) = {
+    array.apply(index)
   }
 
-  def update(i: Int, x: WorkResult) {
-    if (array(i) == null) {
+  def update(index: Int, result: WorkResult) {
+    if (array(index) == null) {
       currentSize += 1
     }
-    array.update(i, x)
+    array.update(index, result)
   }
 
   def isFull = {

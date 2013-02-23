@@ -2,19 +2,19 @@ package fractal
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
+
+import com.typesafe.config.ConfigFactory
+
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.pattern.ask
 import akka.util.Timeout
-import akka.actor.AddressFromURIString
-import akka.actor.Deploy
-import akka.remote.RemoteScope
-import com.typesafe.config.ConfigFactory
 
 class DistributedRenderer() {
   private val config = ConfigFactory.load
   private implicit val system = ActorSystem("MasterSystem", config.getConfig("masterSystem"))
-  private implicit val timeout = Timeout(20 seconds)
+  private val timeoutSeconds = system.settings.config.getString("settings.timeout-seconds").toInt
+  private implicit val timeout = Timeout(timeoutSeconds seconds)
 
   private val master = system.actorOf(Props[Master], "master")
   private val client = new DistributedRendererClient
@@ -44,8 +44,12 @@ class DistributedRenderer() {
 class DistributedRendererClient {
   private val config = ConfigFactory.load
   private implicit val system = ActorSystem("WorkerSystem", config.getConfig("workerSystem"))
-  private val master = system.actorFor("akka://MasterSystem@10.59.100.85:2554/user/master")
   private implicit val timeout = Timeout(20 seconds)
+  
+  private val masterIP = system.settings.config.getString("masterSystem.akka.remote.netty.hostname")
+  private val masterPort = system.settings.config.getString("masterSystem.akka.remote.netty.port")
+  
+  private val master = system.actorFor(s"akka://MasterSystem@$masterIP:$masterPort/user/master") //   
   private val worker = system.actorOf(Props(new Worker(master)), "worker")
 
   def shutdown = system.shutdown
