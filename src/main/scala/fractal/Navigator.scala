@@ -1,6 +1,6 @@
 package fractal
 
-class Navigator(renderer: DistributedRenderer) {
+class Navigator(distRenderer: DistributedRenderer) {
 
   private var panel: Option[GraphicsPanel] = None
   private var dimension = DefaultParameters.dimension
@@ -49,7 +49,7 @@ class Navigator(renderer: DistributedRenderer) {
 
   def requestRenderToPanel {
     if (panel.isDefined)
-      renderer.renderToPanel(RenderParams(dimension, location, algparams), panel.get)
+      distRenderer.renderToPanel(RenderParams(dimension, location, algparams), panel.get)
   }
 
   def getParamString = {

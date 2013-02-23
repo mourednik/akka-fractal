@@ -2,6 +2,8 @@ package fractal;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -9,16 +11,13 @@ import javax.swing.JPanel;
 public class MainFrame {
 
 	private JFrame frame;
-	private DistributedRenderer renderer;
+	private DistributedRenderer distRenderer;
 	private Navigator navigator;
 	private JPanel graphicsPanel;
 
 	public static int WIDTH = DefaultParameters.dimension().x();
 	public static int HEIGHT = DefaultParameters.dimension().y();
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -32,26 +31,31 @@ public class MainFrame {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public MainFrame() {
 		initialize();
+
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		frame = new JFrame();
-		renderer = new DistributedRenderer();
-		navigator = new Navigator(renderer);
+		distRenderer = new DistributedRenderer();
+		navigator = new Navigator(distRenderer);
 		graphicsPanel = new GraphicsPanel(navigator);
 
 		frame.setBounds(100, 100, WIDTH, HEIGHT);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(graphicsPanel, BorderLayout.CENTER);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				shutdown();
+			}
+		});
 	}
 
+	private void shutdown() {
+		frame.dispose();
+		distRenderer.shutdown();
+		System.exit(0);
+	}
 }

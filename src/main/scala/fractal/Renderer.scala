@@ -9,7 +9,7 @@ import akka.actor.ActorSystem
 class Renderer(val actorSystem: ActorSystem) {
   this: RendererAlgorithm =>
 
-  implicit val dispatcher = actorSystem.dispatcher
+  private implicit val dispatcher = actorSystem.dispatcher
 
   private def renderSegment(subtask: SubTask) = computeImageSegment(subtask)
 
@@ -22,5 +22,5 @@ class Renderer(val actorSystem: ActorSystem) {
 }
 
 trait RendererAlgorithm {
-  def computeImageSegment(subtask: SubTask): ImageSegment
+  protected def computeImageSegment(subtask: SubTask): ImageSegment
 }
