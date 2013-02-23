@@ -9,11 +9,9 @@ object Main extends App {
 
   override def main(args: Array[String]): Unit = {
     if (args.length == 1 && args(0) == "client") {
-      implicit val timeout = Timeout(20 seconds)
-      implicit val system = ActorSystem("FractalSystem")
-      val client = new DistributedRendererClient(system)
+      val client = new DistributedRendererClient
       readLine("Client started. Press any key to exit.")
-      system.shutdown
+      client.shutdown
     } else {
       MainFrame.main(args)
     }

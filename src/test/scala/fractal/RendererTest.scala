@@ -36,7 +36,7 @@ class RendererTest extends FunSuite with ShouldMatchers {
     val renderer = new Renderer(system) with JuliaAlgorithm
     val image = renderer.render(numThreads, renderTask)
     image.getSize should equal(dimension.x * dimension.y)
-  }
+  }  
 
   def prepareMandelbrotTask(dimension: Dimension) = {
     //val location = Location("Another Mandelbrot", Coordinate(-0.1592, -1.0317), 32.0);

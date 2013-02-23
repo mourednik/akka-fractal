@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage
 
 import scala.Array.canBuildFrom
 
-class Image(pixels: Array[Short], task: Task) {
+class Image(pixels: Array[Short], task: Task) extends Serializable {
 
   def getSize = pixels.length
 
@@ -20,7 +20,7 @@ class Image(pixels: Array[Short], task: Task) {
 }
 
 case class ImageSegment(protected val pixels: Array[Short], protected val task: SubTask)
-  extends Image(pixels, task) with Serializable {
+  extends Image(pixels, task) {
 
   def lowerBound = task.segmentRange._1
 
@@ -33,4 +33,5 @@ case class ImageSegment(protected val pixels: Array[Short], protected val task: 
     val combinedPixels = pixels ++ other.pixels
     new ImageSegment(combinedPixels, combinedTask)
   }
+  
 }

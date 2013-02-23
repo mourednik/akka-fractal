@@ -21,6 +21,7 @@ trait MandelbrotAlgorithm extends RendererAlgorithm {
     val aspectScale = aspectRatio * scale
     val xConst = xPos - (aspectRatio * scale * 0.5)
     val yConst = yPos - (scale * 0.5)
+    
     val pixels = new Array[Short](width * segmentHeight)
     var bufferIndex = 0
 

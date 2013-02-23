@@ -58,26 +58,30 @@ class SubTask(renderParams: RenderParams, id: Int, val segmentRange: (Int, Int),
 
   private def makeSubTask(index: Int, height: Int, offset: Int) = {
     val lowerBound = index * height + offset
-    val upperBound = (index + 1) * height
+    val upperBound = (index + 1) * height + offset
     val subRange = (lowerBound, upperBound)
     SubTask(renderParams, subRange, index, id)
   }
 
-  private def makeLastSubTask(index: Int, height: Int, offset: Int, upperBound: Int) = {
+  private def makeLastSubTask(index: Int, height: Int, offset: Int) = {
     val lowerBound = index * height + offset
-    val subRange = (lowerBound, upperBound)
+    val subRange = (lowerBound, segmentRange._2)
     SubTask(renderParams, subRange, index, id)
   }
 
-  override def makeSubTasks(numThreads: Int) = {
+  override def makeSubTasks(numSubTasks: Int) = {
     val height = getHeight
-    val subHeight = height / numThreads
-    for (i <- 0 until numThreads) yield {
-      if (i < numThreads - 1)
+    val subHeight = height / numSubTasks
+    for (i <- 0 until numSubTasks) yield {
+      if (i < numSubTasks - 1)
         makeSubTask(i, subHeight, segmentRange._1)
       else
-        makeLastSubTask(i, subHeight, segmentRange._1, height)
+        makeLastSubTask(i, subHeight, segmentRange._1)
     }
+  }
+  
+    override def toString = {
+    s"$renderParams $id $hashCode $segmentRange $index"
   }
 }
 

@@ -28,7 +28,7 @@ class WorkerTest extends TestKit(ActorSystem("WorkerTest"))
   "Worker" should {
     "work" in {
       val master = system.actorOf(Props[Master], "master")
-      val worker = system.actorOf(Props[Worker])
+      val worker = system.actorOf(Props(new Worker(master)))
       val task = makeTask
       val future = master ? task
       try {

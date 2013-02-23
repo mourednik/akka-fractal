@@ -33,13 +33,13 @@ class Master extends Actor with ActorLogging {
 
   def receive = {
     case WorkerCreated(worker) =>
-      log.info(s"MASTER: Worker created: $worker")
+      //log.info(s"MASTER: Worker created: $worker")
       context.watch(worker)
       workers += (worker -> None)
       notifyWorkers()
 
     case WorkerRequestsWork(worker) =>
-      log.info(s"MASTER: Worker requests work: $worker")
+      //log.info(s"MASTER: Worker requests work: $worker")
       if (workers.contains(worker)) {
         if (workQ.isEmpty)
           worker ! NoWorkToBeDone
@@ -55,14 +55,14 @@ class Master extends Actor with ActorLogging {
       if (!workers.contains(worker))
         log.error(s"MASTER: Unknown worker $worker")
       else {
-        log.info(s"MASTER: Received workResult ${workResult.task}")
+        //log.info(s"MASTER: Received workResult ${workResult.task}")
         workers += (worker -> None)
         workResultAggregator.insertResult(workResult)
       }
 
     case Terminated(worker) =>
       if (workers.contains(worker) && workers(worker) != None) {
-        log.error(s"MASTER: $worker died while processing ${workers(worker)}")
+        //log.error(s"MASTER: $worker died while processing ${workers(worker)}")
         val work = workers(worker).get
         workers -= worker
         workQ.enqueue(work)
@@ -72,10 +72,12 @@ class Master extends Actor with ActorLogging {
     case renderParams: RenderParams => {
       val task = Task(renderParams, taskCounter)
       taskCounter += 1
-      val subtasks = task.makeSubTasks(Math.max(1, workers.size))
+      val size = renderParams.dimension.x * renderParams.dimension.y * 4
+      val numSubTasks = math.max(1, size / 512000)
+      val subtasks = task.makeSubTasks(numSubTasks)
       val thisSender = sender
       log.info(s"MASTER: Received Task. Preparing collector for $task")
-      workResultAggregator.prepareForCollection(task, Math.max(1, workers.size))
+      workResultAggregator.prepareForCollection(task, numSubTasks)
       subtasks.foreach(subtask => workQ.enqueue(Work(sender, subtask)))
       notifyWorkers
     }
@@ -83,7 +85,7 @@ class Master extends Actor with ActorLogging {
 
 }
 
-object MasterWorkerProtocol {
+object MasterWorkerProtocol extends Serializable {
   // Messages from Workers
   case class WorkerCreated(worker: ActorRef)
   case class WorkerRequestsWork(worker: ActorRef)
