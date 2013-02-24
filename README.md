@@ -13,10 +13,17 @@ The worker will connect to the master and request work, in a work-pulling patter
 Specify the master IP and port in src/main/resources/reference.conf
 
 GUI controls:
+
 A: Zoom in.
+
 Z: Zoom out.
+
 S: Increase iterations.
+
 X: Decrease iterations.
+
 R: Redraw (re-render) buffer.
+
 J: Julia set.
+
 M: Mandelbrot set.
