@@ -1,13 +1,13 @@
 package fractal
 
 object ConfigParser {
-  
+
   def parse(input: String): (Location, AlgorithmParams) = {
     val wordGrp = """(\w+)"""
     val realGrp = """(-?\d+.\d+)"""
     val intGrp = """(\d+)"""
     val anyGrp = """(.*)"""
-      
+
     val initialPattern = s"$wordGrp $realGrp $realGrp $realGrp $wordGrp $anyGrp".r
     val mandelPattern = intGrp.r
     val juliaPattern = s"$intGrp $realGrp $realGrp".r
@@ -18,12 +18,12 @@ object ConfigParser {
     algorithm match {
       case "mandelbrot" =>
         val mandelPattern(maxIterations) = paramString
-        val parameters = MandelbrotParams(maxIterations.toInt)     
-        return (location, parameters)        
-      case "julia" =>
+        val parameters = MandelbrotParams(maxIterations.toInt)
+        (location, parameters)
+      case "julia"      =>
         val juliaPattern(maxIterations, real, image) = paramString
         val parameters = JuliaParams(maxIterations.toInt, Complex(real.toDouble, image.toDouble))
-        return (location, parameters)
+        (location, parameters)
     }
   }
 }

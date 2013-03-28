@@ -12,7 +12,7 @@ class Master extends Actor with ActorLogging {
 
   import MasterWorkerProtocol._
 
-  private val packetSize = context.system.settings.config.getString("settings.packet-size").toInt  
+  private val packetSize = context.system.settings.config.getString("settings.packet-size").toInt
   private var taskCounter = 0
 
   private val workResultAggregator = new WorkResultAggregator(this)
@@ -23,11 +23,11 @@ class Master extends Actor with ActorLogging {
     recipient ! imageSegment
   }
 
-  def notifyWorkers(): Unit = {
+  def notifyWorkers() {
     if (!workQ.isEmpty) {
       workers.foreach {
         case (worker, m) if (m.isEmpty) => worker ! WorkIsReady
-        case _ =>
+        case _                          =>
       }
     }
   }
@@ -62,7 +62,7 @@ class Master extends Actor with ActorLogging {
         val work = workers(worker).get
         workers -= worker
         workQ.enqueue(work)
-        notifyWorkers
+        notifyWorkers()
       }
 
     case renderParams: RenderParams => {
@@ -74,20 +74,26 @@ class Master extends Actor with ActorLogging {
       val thisSender = sender
       workResultAggregator.prepareForCollection(task, numSubTasks)
       subtasks.foreach(subtask => workQ.enqueue(Work(sender, subtask)))
-      notifyWorkers
+      notifyWorkers()
     }
   }
 
 }
 
 object MasterWorkerProtocol extends Serializable {
+
   // Messages from Workers
   case class WorkerCreated(worker: ActorRef)
+
   case class WorkerRequestsWork(worker: ActorRef)
+
   case class WorkIsDone(worker: ActorRef, workResult: WorkResult)
 
   // Messages to Workers
   case class WorkToBeDone(work: Work)
+
   case object WorkIsReady
+
   case object NoWorkToBeDone
+
 }

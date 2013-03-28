@@ -7,18 +7,18 @@ class Navigator(distRenderer: DistributedRenderer) {
   private var location = DefaultParameters.mandelbrotLocation
   private var algparams: AlgorithmParams = DefaultParameters.mandelbrotParameters
 
-  def loadJulia {
+  def loadJulia() {
     location = DefaultParameters.juliaLocation
     algparams = DefaultParameters.juliaParameters
-    requestRenderToPanel
+    requestRenderToPanel()
   }
-  
-  def loadMandelbrot {
+
+  def loadMandelbrot() {
     location = DefaultParameters.mandelbrotLocation
     algparams = DefaultParameters.mandelbrotParameters
-    requestRenderToPanel
+    requestRenderToPanel()
   }
-  
+
   def setGraphicsPanel(panel: GraphicsPanel) {
     this.panel = Some(panel)
   }
@@ -30,21 +30,21 @@ class Navigator(distRenderer: DistributedRenderer) {
   def incrementZoom(increment: Double) {
     val newZoom = location.zoom * increment
     location = Location(location.name, location.coordinate, newZoom)
-    requestRenderToPanel
+    requestRenderToPanel()
   }
 
   def incrementXCoordinate(increment: Double) {
     val scaledIncrement = increment / location.zoom
     val newCoordinate = Coordinate(location.coordinate.x + scaledIncrement, location.coordinate.y)
     location = Location(location.name, newCoordinate, location.zoom)
-    requestRenderToPanel
+    requestRenderToPanel()
   }
 
   def incrementYCoordinate(increment: Double) {
     val scaledIncrement = increment / location.zoom
     val newCoordinate = Coordinate(location.coordinate.x, location.coordinate.y + scaledIncrement)
     location = Location(location.name, newCoordinate, location.zoom)
-    requestRenderToPanel
+    requestRenderToPanel()
   }
 
   def incrementIterations(increment: Int) {
@@ -52,19 +52,16 @@ class Navigator(distRenderer: DistributedRenderer) {
       case mandelParams: MandelbrotParams =>
         val iterations = Math.max(0, mandelParams.maxIterations + increment)
         algparams = MandelbrotParams(iterations)
-      case juliaParams: JuliaParams =>
+      case juliaParams: JuliaParams       =>
         val iterations = Math.max(0, juliaParams.maxIterations + increment)
         algparams = JuliaParams(iterations, juliaParams.coefficient)
     }
-    requestRenderToPanel
+    requestRenderToPanel()
   }
 
-  def requestRenderToPanel {
-    if (panel.isDefined)
-      distRenderer.renderToPanel(RenderParams(dimension, location, algparams), panel.get)
+  def requestRenderToPanel() {
+    if (panel.isDefined) distRenderer.renderToPanel(RenderParams(dimension, location, algparams), panel.get)
   }
 
-  def getParamString = {
-    s"$dimension, $location, $algparams"
-  }
+  def getParamString = s"$dimension, $location, $algparams"
 }

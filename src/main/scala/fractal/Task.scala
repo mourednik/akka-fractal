@@ -1,11 +1,10 @@
 package fractal
 
-import scala.collection.immutable
 
 /**
  * Task
  */
-case class Task(val renderParams: RenderParams, val id: Int) extends Serializable {
+case class Task(renderParams: RenderParams, id: Int) extends Serializable {
 
   def height = renderParams.dimension.y
 
@@ -36,29 +35,25 @@ case class Task(val renderParams: RenderParams, val id: Int) extends Serializabl
     }
   }
 
-  override def hashCode: Int = {
-    renderParams.hashCode + id.hashCode
-  }
+  override def hashCode = renderParams.hashCode + id.hashCode
 
-  override def equals(other: Any) = {
+  override def equals(other: Any) =
     other match {
       case that: Task => {
         this.renderParams == that.renderParams &&
           this.id == that.id
       }
-      case _ => false
+      case _          => false
     }
-  }
 
-  override def toString = {
-    s"$renderParams $id $hashCode"
-  }
+  override def toString = s"$renderParams $id $hashCode"
 }
 
 /**
  * SubTask
  */
 class SubTask(renderParams: RenderParams, id: Int, private val segmentRange: (Int, Int), val index: Int)
+
   extends Task(renderParams, id) {
 
   override def height = segmentRange._2 - segmentRange._1
@@ -73,7 +68,7 @@ class SubTask(renderParams: RenderParams, id: Int, private val segmentRange: (In
     SubTask(renderParams, (lb, ub))
   }
 
-  def +(other: SubTask) = {
+  def +(other: SubTask) =
     if (renderParams != other.renderParams) {
       sys.error("Tasks have different RenderParams.")
     } else if (segmentUB == other.segmentLB ||
@@ -82,27 +77,21 @@ class SubTask(renderParams: RenderParams, id: Int, private val segmentRange: (In
     } else {
       sys.error("Only adjacent segments can be combined.")
     }
-  }
 
-  override def toString = {
-    super.toString + s" $segmentRange $index"
-  }
+  override def toString = super.toString + s" $segmentRange $index"
 }
 
 object SubTask {
 
-  private def makeSubTask(renderParams: RenderParams, id: Int, segmentRange: (Int, Int), index: Int) = {
+  private def makeSubTask(renderParams: RenderParams, id: Int, segmentRange: (Int, Int), index: Int) =
     if (segmentRange._1 < 0 || segmentRange._2 > renderParams.dimension.y)
       sys.error("SegmentBounds exceed dimensions")
     else
       new SubTask(renderParams, id, segmentRange, index)
-  }
 
-  def apply(renderParams: RenderParams, segmentRange: (Int, Int), index: Int, id: Int) = {
+  def apply(renderParams: RenderParams, segmentRange: (Int, Int), index: Int, id: Int) =
     makeSubTask(renderParams, id, segmentRange, index)
-  }
 
-  def apply(renderParams: RenderParams, segmentRange: (Int, Int)) = {
+  def apply(renderParams: RenderParams, segmentRange: (Int, Int)) =
     makeSubTask(renderParams, 0, segmentRange, 0)
-  }
 }

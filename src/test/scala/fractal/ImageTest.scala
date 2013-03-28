@@ -8,7 +8,7 @@ class ImageTest extends FunSuite with ShouldMatchers {
   val pixels1 = Array[Short](1, 2, 3, 4)
   val pixels2 = Array[Short](1, 2, 3, 4)
   val dimension = Dimension(2, 4)
-  val location = Location("Another Mandelbrot", Coordinate(-0.1592, -1.0317), 32.0);
+  val location = Location("Another Mandelbrot", Coordinate(-0.1592, -1.0317), 32.0)
   val maxIterations = 512
   val mandelbrotParameters = MandelbrotParams(maxIterations)
 
@@ -31,7 +31,7 @@ class ImageTest extends FunSuite with ShouldMatchers {
     val imageSegment2 = new ImageSegment(pixels2, task2)
 
     evaluating {
-      val combinedSegments = imageSegment1 + imageSegment2
+      imageSegment1 + imageSegment2
     } should produce[Exception]
 
   }

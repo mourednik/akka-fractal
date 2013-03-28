@@ -21,7 +21,7 @@ trait MandelbrotAlgorithm extends RendererAlgorithm {
     val aspectScale = aspectRatio * scale
     val xConst = xPos - (aspectRatio * scale * 0.5)
     val yConst = yPos - (scale * 0.5)
-    
+
     val pixels = new Array[Short](width * segmentHeight)
     var bufferIndex = 0
 
@@ -48,9 +48,9 @@ trait MandelbrotAlgorithm extends RendererAlgorithm {
       } while (z.abs < 2 && i < maxIterations)
 
       if (z.abs < 2)
-        pixels(bufferIndex) = 0;
+        pixels(bufferIndex) = 0.toShort
       else
-        pixels(bufferIndex) = (i * 256.0 / maxIterations).toShort;
+        pixels(bufferIndex) = (i * 256.0 / maxIterations).toShort
       bufferIndex += 1
     }
     new ImageSegment(pixels, subtask)
@@ -95,7 +95,8 @@ trait JuliaAlgorithm extends RendererAlgorithm {
 
       var result = 0 // set by the following function
 
-      @tailrec def mainloop(i: Int, x: Double, y: Double) {
+      @tailrec
+      def mainloop(i: Int, x: Double, y: Double) {
         if (i < maxIterations) {
           val xsquared = x * x
           val ysquared = y * y
@@ -108,7 +109,7 @@ trait JuliaAlgorithm extends RendererAlgorithm {
         }
       }
       mainloop(0, xReal, yReal)
-      pixels(bufferIndex) = (result * 256.0 / maxIterations).toShort;
+      pixels(bufferIndex) = (result * 256.0 / maxIterations).toShort
       bufferIndex += 1
     }
     new ImageSegment(pixels, subtask)

@@ -1,13 +1,13 @@
 import sbt._
 import Keys._
 
-object test extends Build {
+object BuildConfig extends Build {
 
   val projectName = "akka-fractal"
 
   override lazy val settings = super.settings ++ Seq(resolvers := Seq())
 
-  val akkaVersion = "2.1.0"
+  val akkaVersion = "2.1.2"
 
   val akkaActor = "com.typesafe.akka" %% "akka-actor" % akkaVersion
   val akkaRemote = "com.typesafe.akka" %% "akka-remote" % akkaVersion
@@ -16,7 +16,7 @@ object test extends Build {
   val sprayJSON = "io.spray" %% "spray-json" % "1.2.3"
 
   val publishedScalaSettings = Seq(
-    scalaVersion := "2.10.0",
+    scalaVersion := "2.10.1",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
       "Typesafe repo" at "http://repo.typesafe.com/typesafe/releases/",

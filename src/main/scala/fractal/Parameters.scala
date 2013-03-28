@@ -6,31 +6,28 @@ case class MandelbrotParams(var maxIterations: Int) extends AlgorithmParams
 
 case class JuliaParams(var maxIterations: Int, var coefficient: Complex) extends AlgorithmParams
 
+case class RenderParams(dimension: Dimension, location: Location, algorithmParams: AlgorithmParams)
+
 case class Coordinate(x: Double, y: Double)
 
-case class Location(val name: String, val coordinate: Coordinate, val zoom: Double) extends Serializable {
-
+case class Location(name: String, coordinate: Coordinate, zoom: Double) extends Serializable {
   override def equals(other: Any) = other match {
     case that: Location =>
       this.name == that.name &&
         this.coordinate == that.coordinate &&
         this.zoom == that.zoom
-    case _ => false
+    case _              => false
   }
 }
 
-case class Dimension(val x: Int, val y: Int) extends Serializable {
-  
+case class Dimension(x: Int, y: Int) extends Serializable {
   override def equals(other: Any) = other match {
     case that: Dimension => (this.x == that.x && this.y == that.y)
-    case _ => false
+    case _               => false
   }
 }
 
-case class RenderParams(dimension: Dimension, location: Location, algorithmParams: AlgorithmParams)
-
 object DefaultParameters {
-
   def dimension = Dimension(1280, 800)
 
   def iterations = 128

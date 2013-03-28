@@ -11,10 +11,9 @@ class Image(pixels: Array[Short], task: Task) extends Serializable {
   def getBufferedImage: BufferedImage = {
     import task.renderParams._
     val image = new BufferedImage(dimension.x, dimension.y, BufferedImage.TYPE_INT_RGB)
-    for (x <- 0 until dimension.x; y <- 0 until dimension.y) {
-      val pixval = pixels(y * dimension.x + x)
+    for (x <- 0 until dimension.x;
+         y <- 0 until dimension.y)
       image.setRGB(x, y, pixels(y * dimension.x + x))
-    }
     image
   }
 }

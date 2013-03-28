@@ -16,7 +16,7 @@ class RendererTest extends FunSuite with ShouldMatchers {
     val renderer = new Renderer(system) with MandelbrotAlgorithm
     val image = renderer.render(numThreads, renderTask)
     image.getSize should equal(dimension.x * dimension.y)
-    var filename = "/tmp/mandelbrot.png"
+    val filename = "/tmp/mandelbrot.png"
     FileUtil.saveAsPNG(filename, image.getBufferedImage)
   }
 
@@ -27,7 +27,7 @@ class RendererTest extends FunSuite with ShouldMatchers {
     val renderer = new Renderer(system) with JuliaAlgorithm
     val image = renderer.render(numThreads, renderTask)
     image.getSize should equal(dimension.x * dimension.y)
-    var filename = "/tmp/julia.png"
+    val filename = "/tmp/julia.png"
     FileUtil.saveAsPNG(filename, image.getBufferedImage)
   }
 
@@ -38,16 +38,16 @@ class RendererTest extends FunSuite with ShouldMatchers {
     val renderer = new Renderer(system) with JuliaAlgorithm
     val image = renderer.render(numThreads, renderTask)
     image.getSize should equal(dimension.x * dimension.y)
-  }  
+  }
 
   def mandelbrotTask(dimension: Dimension) = {
-    val location = Location("Default", Coordinate(-0.25, 0.0), 0.5);
+    val location = Location("Default", Coordinate(-0.25, 0.0), 0.5)
     val mandelbrotParameters = MandelbrotParams(128)
     Task(RenderParams(dimension, location, mandelbrotParameters), 0)
   }
 
   def juliaTask(dimension: Dimension) = {
-    val location = Location("Default", Coordinate(0.0, 0.0), 0.5);
+    val location = Location("Default", Coordinate(0.0, 0.0), 0.5)
     val parameters = JuliaParams(128, Complex(-0.4, 0.6))
     Task(RenderParams(dimension, location, parameters), 0)
   }

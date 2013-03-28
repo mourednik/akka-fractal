@@ -12,13 +12,13 @@ object FileUtil {
   def writeFile(filename: String, content: Array[Byte]) {
     val output = new FileOutputStream(filename)
     output.write(content)
-    output.close
+    output.close()
   }
 
   def saveAsPNG(filename: String, image: BufferedImage) {
     try {
-      var outputfile = new File(filename);
-      ImageIO.write(image, "png", outputfile);
+      val outputfile = new File(filename)
+      ImageIO.write(image, "png", outputfile)
     } catch {
       case e: IOException =>
     }
