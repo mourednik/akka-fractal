@@ -1,6 +1,7 @@
-/bin
-/project/target
-/target
+./project/target/
+./project/project/
+.idea
+target
 .directory
 .cache
 .classpath
